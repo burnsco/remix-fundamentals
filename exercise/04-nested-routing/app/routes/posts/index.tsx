@@ -1,11 +1,12 @@
-import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import invariant from "tiny-invariant";
 import { getPostListItems } from "~/models/post.server";
 
 export const loader = async () => {
-  return json({
-    posts: await getPostListItems(),
-  });
+  const posts = await getPostListItems()
+  invariant(posts, 'What? no posts!?')
+
+  return { posts}
 };
 
 export default function Posts() {
@@ -13,7 +14,9 @@ export default function Posts() {
   return (
     <main>
       <h1>Posts</h1>
-      {/* 🐨 Add a Link to "admin" here */}
+      <Link to="admin" className="text-red-600 underline">
+        Admin
+      </Link>
       <ul>
         {posts.map((post) => (
           <li key={post.slug}>
