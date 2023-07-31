@@ -6,34 +6,42 @@
 // 5. redirect to "/posts/admin".
 
 import { Form, useActionData } from "@remix-run/react";
-import { json, redirect } from "@remix-run/server-runtime";
+import { json, redirect, type ActionArgs } from '@remix-run/server-runtime';
+import invariant from "tiny-invariant";
 import { createNewPost } from "~/models/post.server";
 
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
 
 
-export async function action({ request }: any ) {
+export async function action({ request }: ActionArgs ) {
   const formData = await request.formData()
 
-  const title = formData.get("title")
-  if (typeof title !== "string" || !title) {
-    return json({ title: 'Title is required'})
-  }
-  if (title.length < 5) {
-    return json({ title: 'Must be at least 5 characters'})
+  const title = formData.get("title");
+  const slug = formData.get("slug");
+  const markdown = formData.get("markdown");
+
+  const errors = {
+    title: title ? null : "Title is required",
+    slug: slug ? null : "Slug is required",
+    markdown: markdown ? null : "Markdown is required",
+  };
+
+  const hasErrors = Object.values(errors).some((errorMessage) => errorMessage);
+  if (hasErrors) {
+    return json(errors);
   }
 
-  const slug = formData.get("slug")
-  const markdown = formData.get("markdown")
+  invariant(typeof title === "string", "title must be a string");
+  invariant(typeof slug === "string", "slug must be a string");
+  invariant(typeof markdown === "string", "markdown must be a string");
 
 
   await createNewPost({ title, slug, markdown})
-
   return redirect(`/posts/admin`)
 }
 
 export default function NewPost() {
-  const errors = useActionData()
+  const errors = useActionData<typeof action>()
   return (
     <Form method="post">
       <p>
