@@ -168,7 +168,7 @@ That works fine, but I want to show you another package called
 runtime type checking like that. Checkout the docs for that package (it's
 already installed) and make TypeScript happy about things.
 
-We'll also want to do the same for if no post is found by the given slug in the
+We'll also want to use that method if no post is found by the given slug in the
 database. We'll deal with a proper `404` status code and error page later.
 
 **Files**:
