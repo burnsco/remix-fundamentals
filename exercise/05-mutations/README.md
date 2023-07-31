@@ -51,7 +51,7 @@ import { Form } from "@remix-run/react";
 import { createNewDogo } from "~/models/dogo.server";
 
 export async function action({ request, params }: ActionArgs) {
-  const formData = await request.formData(); // <-- 📜 learn more https://mdn.io/formData
+  const formData = await request.formData();
   const name = formData.get("dogo-name");
   const newDogo = await createNewDogo({ name });
   return redirect(`/dogo/${newDogo.id}`);
